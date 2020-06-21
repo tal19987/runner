@@ -1,9 +1,15 @@
-import argparse,subprocess
+import argparse
+import subprocess
 
 
-def multiple_command(number, command):
+def multiple_command(number, command, failed):
+    return_codes = 0
     for i in range(number):
-        subprocess.run([command])
+        if subprocess.run(command.split()) != 0:
+            return_codes += 1
+            if return_codes == failed:
+                print(f'Command failed for {failed} times. Giving up...ed')
+                break
 
 
 parser = argparse.ArgumentParser(description='Outputs a summery of execution of any command',
@@ -11,7 +17,7 @@ parser = argparse.ArgumentParser(description='Outputs a summery of execution of 
 parser.add_argument('COMMAND', help='The command you wish to run')
 parser.add_argument('-c', metavar='NUM', type=int,
                     help='Number of times to run the given command')
-parser.add_argument('--failed-count', metavar='NUM', nargs=1, default=0, type=int,
+parser.add_argument('--failed-count', type=int, default=-1,
                     help='Number of allowed failed command invocation attempts before giving up')
 parser.add_argument('--sys-trace', metavar='',
                     help='Creates a log for:\n'
@@ -29,5 +35,12 @@ parser.add_argument('--debug', metavar='',
 
 args = parser.parse_args()
 
-if args.c:
-    multiple_command(args.c, args.COMMAND)
+if args.failed_count:
+    if not args.c:
+        parser.error('--failed-count must be used with \'-c\'')
+    else:
+        if args.failed_count > args.c:
+            parser.error('--failed-count value must be equal to or smaller then \'-c\' value')
+        else:
+            multiple_command(args.c, args.COMMAND, args.failed_count)
+
