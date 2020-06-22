@@ -5,23 +5,32 @@ import psutil
 from multiprocessing import Process, Queue
 
 
-def create_memory_log(file_number):
+def create_memory_log(file_number,data):
     filename = 'memory' + str(file_number) + '.log'
     with open(filename,'w') as f:
-        f.write(str(psutil.virtual_memory()))
+        f.write(data)
+
 
 def create_disk_io_log(file_number,data):
     filename = 'diskio' + str(file_number) + '.log'
     with open(filename, 'w') as f:
         f.write(data)
 
+
 def get_disk_io(q):
     data = psutil.disk_io_counters()
     q.put(str(data))
 
+
+def get_memory(q):
+    data = psutil.virtual_memory()
+    q.put(str(data))
+
+
 def run_command(command,q):
     data = subprocess.run(command.split())
     q.put(data.returncode)
+
 
 def main_command(command, number, failed, systrace):
     return_codes_error = 0
@@ -31,32 +40,32 @@ def main_command(command, number, failed, systrace):
     #q4 = Queue()
     #q5 = Queue()
     for i in range(number):
+        if return_codes_error == failed and failed != 0:
+            print(f'Command failed for {failed} times. Giving up...')
+            break
         p1 = Process(target=run_command,args=(command,q1))
         p2 = Process(target=get_disk_io, args=(q2,))
-        #p3 = Process(target=create_memory_log,args=(q3,))
+        p3 = Process(target=get_memory,args=(q3,))
         #p4 = Process(target=cpu_and_processes_log, args=(q4,)
         #p5 = Process(target=network_package_log, args=(q5,))
         p1.start()
         p2.start()
-        # p3.start()
+        p3.start()
         # p4.start()
         # p5.start()
 
         p1.join()
         p2.join()
-        # p3.join()
+        p3.join()
         # p4.join()
         # p5.join()
 
         if q1.get() != 0:
             if systrace:
                 create_disk_io_log(return_codes_error,q2.get())
-                # create memory
+                create_memory_log(return_codes_error,q3.get())
                 # create network
                 # create cpu
-            if return_codes_error == failed and failed != 0:
-                print(f'Command failed for {failed} times. Giving up...')
-                break
             return_codes_error += 1
 
 
