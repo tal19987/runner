@@ -84,7 +84,7 @@ def main_command(command, number_of_runs, failed_count, systrace):
                 for file , queue in json_of_files.items():
                     create_logs(file, return_codes_error, queues[queue].get())
             return_codes_error += 1
-
+    return exit_codes
 
 parser = argparse.ArgumentParser(description='Outputs a summery of execution of any command',
                                  formatter_class=argparse.RawTextHelpFormatter)
@@ -112,4 +112,10 @@ args = parser.parse_args()
 if args.failed_count > args.c:
     parser.error('--failed-count value must be equal or higher than -c value (default is 1)')
 
-main_command(args.COMMAND, args.c, args.failed_count, args.sys_trace)
+exit_codes = main_command(args.COMMAND, args.c, args.failed_count, args.sys_trace)
+exit_codes_fixed = Counter(exit_codes)
+number, count = Counter(exit_codes_fixed).most_common(1)[0]
+print(f"The most common exit code is- {number} which appears {count} times")
+
+for number , count in Counter(exit_codes_fixed).items():
+    print(f"The exit code {number} appears {count} times")
