@@ -4,6 +4,11 @@ import psutil
 from multiprocessing import Process, Queue
 from collections import Counter
 import pdb
+import sys
+import signal
+
+get_exit_codes = []
+
 
 def create_logs(file_name, file_number, data):
     with open(f"{file_name}{file_number}.log",'w') as f:
@@ -40,12 +45,11 @@ def run_command(command, isCallTrace, q):
 
 
 def start_runner(command, number_of_runs, failed_count, systrace, calltrace, logtrace):
-
     # Defining variables
     counter_returned_error_code = 0
     queues = {}
     returned_objects = []
-    get_exit_codes = []
+    global get_exit_codes
 
     json_of_systrace_functions = {
         get_disk_io : "q1",
@@ -113,7 +117,7 @@ def start_runner(command, number_of_runs, failed_count, systrace, calltrace, log
 
             counter_returned_error_code += 1
 
-    return get_exit_codes
+    #return get_exit_codes
 
 
 def build_parser():
@@ -138,6 +142,7 @@ def build_parser():
     parser.add_argument('--debug', action='store_const', metavar='', const="True",
                         help='Debug mode')
     args = parser.parse_args()
+
     if args.failed_count > args.c:
         parser.error('--failed-count value must be equal or lower than -c value (default is 1)')
 
@@ -147,8 +152,9 @@ def build_parser():
     return args
 
 
-def print_summary(list_exit_codes):
-    exit_codes_fixed = Counter(list_exit_codes)
+def print_summary():
+    global get_exit_codes
+    exit_codes_fixed = Counter(get_exit_codes)
     number, count = exit_codes_fixed.most_common(1)[0]
     print(f"The most common exit code is- {number} which appears {count} times")
 
@@ -156,17 +162,19 @@ def print_summary(list_exit_codes):
         print(f"The exit code {number} appears {count} times")
 
 
+def signal_handler(signal_recieved, frame):
+    sys.exit(0)
 
 
 if __name__ == "__main__":
-    args = build_parser()
-    if args.debug:
-        # adding tracer
-        pdb.set_trace()
-        exit_codes = start_runner(args.COMMAND, args.c, args.failed_count, args.sys_trace, args.call_trace, args.log_trace)
-    else:
-        # No tracer
-        exit_codes = start_runner(args.COMMAND, args.c, args.failed_count, args.sys_trace, args.call_trace,args.log_trace)
-
-    print_summary(exit_codes)
+    signal.signal(signal.SIGINT, signal_handler)
+    try:
+        args = build_parser()
+        if args.debug:
+            pdb.set_trace()
+            start_runner(args.COMMAND, args.c, args.failed_count, args.sys_trace, args.call_trace, args.log_trace)
+        else:
+            start_runner(args.COMMAND, args.c, args.failed_count, args.sys_trace, args.call_trace,args.log_trace)
+    finally:
+        print_summary()
 
