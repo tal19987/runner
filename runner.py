@@ -163,11 +163,13 @@ def print_summary():
 
 
 def signal_handler(signal_recieved, frame):
+    print(f"Program was interrupted by signal number {signal_recieved}")
     sys.exit(0)
 
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
     try:
         args = build_parser()
         if args.debug:
