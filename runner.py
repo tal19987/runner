@@ -117,8 +117,6 @@ def start_runner(command, number_of_runs, failed_count, systrace, calltrace, log
 
             counter_returned_error_code += 1
 
-    #return get_exit_codes
-
 
 def build_parser():
     parser = argparse.ArgumentParser(description='Outputs a summery of execution of any command',
@@ -179,4 +177,3 @@ if __name__ == "__main__":
             start_runner(args.COMMAND, args.c, args.failed_count, args.sys_trace, args.call_trace,args.log_trace)
     finally:
         print_summary()
-
