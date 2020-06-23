@@ -112,7 +112,7 @@ def main_command(command, number_of_runs, failed_count, systrace, calltrace, log
             if logtrace:
                 stderr , stdout = get_log_stderr_stdout["stderr"] , get_log_stderr_stdout["stdout"]
                 create_logs("logtrace", counter_returned_error_code, f"stdout is: {stdout}\nstderr is: {stderr}")
-        counter_returned_error_code += 1
+            counter_returned_error_code += 1
     return get_exit_codes
 
 parser = argparse.ArgumentParser(description='Outputs a summery of execution of any command',
