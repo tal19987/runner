@@ -3,7 +3,7 @@ from subprocess import PIPE, run
 import psutil
 from multiprocessing import Process, Queue
 from collections import Counter
-
+import pdb
 
 def create_logs(file_name, file_number, data):
     with open(f"{file_name}{file_number}.log",'w') as f:
@@ -103,12 +103,16 @@ def start_runner(command, number_of_runs, failed_count, systrace, calltrace, log
             if systrace:
                 for file , queue in json_of_systrace_files.items():
                     create_logs(file, counter_returned_error_code, queues[queue].get())
+
             if calltrace:
                 create_logs("calltrace", counter_returned_error_code, get_strace_output)
+
             if logtrace:
                 stderr , stdout = get_log_stderr_stdout["stderr"] , get_log_stderr_stdout["stdout"]
                 create_logs("logtrace", counter_returned_error_code, f"stdout is: {stdout}\nstderr is: {stderr}")
+
             counter_returned_error_code += 1
+
     return get_exit_codes
 
 
@@ -143,13 +147,26 @@ def build_parser():
     return args
 
 
-
-if __name__ == "__main__":
-    args = build_parser()
-    exit_codes = start_runner(args.COMMAND, args.c, args.failed_count, args.sys_trace, args.call_trace, args.log_trace)
-    exit_codes_fixed = Counter(exit_codes)
+def print_summary(list_exit_codes):
+    exit_codes_fixed = Counter(list_exit_codes)
     number, count = exit_codes_fixed.most_common(1)[0]
     print(f"The most common exit code is- {number} which appears {count} times")
 
-    for number , count in exit_codes_fixed.items():
+    for number, count in exit_codes_fixed.items():
         print(f"The exit code {number} appears {count} times")
+
+
+
+
+if __name__ == "__main__":
+    args = build_parser()
+    if args.debug:
+        # adding tracer
+        pdb.set_trace()
+        exit_codes = start_runner(args.COMMAND, args.c, args.failed_count, args.sys_trace, args.call_trace, args.log_trace)
+    else:
+        # No tracer
+        exit_codes = start_runner(args.COMMAND, args.c, args.failed_count, args.sys_trace, args.call_trace,args.log_trace)
+
+    print_summary(exit_codes)
+
