@@ -1,6 +1,6 @@
 1. You need to install this non-python dependencies in order to run the script: <br/>
    strace <br/>
-2. Here are some links to the resources i've used: <br/>
+2. Here are some links to the resources i have used: <br/>
     a. Multiprocess Docs page (https://docs.python.org/3/library/multiprocessing.html) <br/>
     b. Psutil Docs page (https://psutil.readthedocs.io/en/latest/) <br/>
     c. Argparse Docs page (https://docs.python.org/3/library/argparse.html) <br/>
