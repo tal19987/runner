@@ -43,7 +43,6 @@ def run_command(command, isCallTrace, q):
     data = run(exec_command.split(), stdout=PIPE, stderr=PIPE)
     q.put(data)
 
-
 def start_runner(command, number_of_runs, failed_count, systrace, calltrace, logtrace):
     # Defining variables
     counter_returned_error_code = 0
@@ -59,10 +58,10 @@ def start_runner(command, number_of_runs, failed_count, systrace, calltrace, log
     }
 
     json_of_systrace_files = {
-        "diskio": "q1",
-        "memory": "q2",
-        "cpu_usage": "q3",
-        "network": "q4"
+        "sys_diskio": "q1",
+        "sys_memory": "q2",
+        "sys_cpu_usage": "q3",
+        "sys_network": "q4"
     }
 
     for i in range(0, 5):
