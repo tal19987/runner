@@ -195,7 +195,7 @@ def print_summary():
         print(f"The exit code {number} appears {count} times")
 
 
-# Handling with signals
+# Handling signals
 def signal_handler(signal_recieved, frame):
     print(f"Program was interrupted by signal number {signal_recieved}")
     print_summary()
