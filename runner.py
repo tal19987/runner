@@ -127,6 +127,9 @@ def start_runner(command, number_of_runs, failed_count, systrace, calltrace, log
 
             counter_returned_error_code += 1
 
+    # For unit-testing purposes
+    return get_exit_codes
+
 
 def build_parser():
     parser = argparse.ArgumentParser(description='Outputs a summery of execution of any command',
@@ -178,9 +181,9 @@ def signal_handler(signal_recieved, frame):
 
 
 if __name__ == "__main__":
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
     try:
+        signal.signal(signal.SIGINT, signal_handler)
+        signal.signal(signal.SIGTERM, signal_handler)
         args = build_parser()
         if args.debug:
             pdb.set_trace()
