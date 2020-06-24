@@ -5,17 +5,24 @@ from subprocess import run, PIPE
 
 def test_should_run_cmd_n_times_not_successfully_and_fail():
     runner.get_exit_codes = []
-    total_exit_codes_number = runner.start_runner('ls /test123', 4, 2, False, False, False)  # Suppose to be 2
+    total_exit_codes_number = runner.start_runner('false', 4, 2, False, False, False)  # Suppose to be 2
     assert len(total_exit_codes_number) == 2
 
 
 def test_should_run_cmd_n_times_succefully():
     runner.get_exit_codes = []
-    total_exit_codes_number = runner.start_runner('ls', 3, 0, False, False, False) # Suppose to be 3
+    total_exit_codes_number = runner.start_runner('true', 3, 0, False, False, False) # Suppose to be 3
     assert len(total_exit_codes_number) == 3
 
-def test_should_create_sys_trace_files():
+
+def test_should_create_call_trace_files_when_cmd_fails():
     runner.get_exit_codes = []
-    runner.start_runner('ls /test123', 3, 1, True, False, False)  # Suppose to be 4 files
-    number_of_files =  run("find . -name \*.log | wc -l", shell=True, stdout=PIPE)
+    runner.start_runner('false', 3, 2, False, True, False)  # Suppose to create 2 files
+    number_of_files = run("find . -name 'calltrace*.log' | wc -l", shell=True, stdout=PIPE)
+    assert int(number_of_files.stdout) == 2
+
+def test_should_create_sys_trace_files_when_cmd_fails():
+    runner.get_exit_codes = []
+    runner.start_runner('false', 3, 1, True, False, False)  # Suppose to create 4 files
+    number_of_files =  run("find . -name 'sys_*.log' | wc -l", shell=True, stdout=PIPE)
     assert int(number_of_files.stdout) == 4
