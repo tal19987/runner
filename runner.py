@@ -1,11 +1,14 @@
+#!/usr/bin/env python3
+
 import argparse
 from subprocess import PIPE, run
-import psutil
 from multiprocessing import Process, Queue
 from collections import Counter
 import pdb
 import sys
 import signal
+
+import psutil
 
 get_exit_codes = []
 
