@@ -1,5 +1,6 @@
-import runner
 from subprocess import run, PIPE
+
+import runner
 
 
 def test_should_create_a_simple_log_file():
@@ -47,3 +48,4 @@ def test_should_create_log_trace_files_when_cmd_fails():
     number_of_files = run(
         "find . -name 'logtrace*.log' | wc -l", shell=True, stdout=PIPE)
     assert int(number_of_files.stdout) == 1
+
