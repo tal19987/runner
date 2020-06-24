@@ -20,7 +20,6 @@
    The **third** and quite fun challange was to print, no matter what happens, the summary.<br/>
    I used the module 'signal' to make sure CTRL+C and kill signals will be handled. But, I didn't know how to send the return-code list to the "print_summary" function.<br/>
    That's because that the function- "signal_handler" doesn't get the return-code list. After a while I came to conclusion that I simply can't do it.<br/>
-   I can't send the return-code list to the "signal_handler" function and than pass this list to the "print_summary" function.
-   This is why i used a global var named- "get_exit_codes" (which is the return-code list).
-   By that, I don't need to worry about passing the list between the functions.
-   
+   I can't send the return-code list to the "signal_handler" function and than pass this list to the "print_summary" function.<br/>
+   This is why I used a global var named- "get_exit_codes" (which is the return-code list).<br/>
+   By that, I don't need to worry about passing the list between the functions and the "print_summary" function can run independently.
