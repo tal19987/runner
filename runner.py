@@ -13,7 +13,7 @@ import psutil
 get_exit_codes = []
 
 
-# Defines what parameters the runner.py can get
+# Defines what parameters/options the runner.py can get
 def build_parser():
     parser = argparse.ArgumentParser(description='Outputs a summery of execution of any command',
                                      formatter_class=argparse.RawTextHelpFormatter)
