@@ -2,6 +2,12 @@ import runner
 from subprocess import run, PIPE
 
 
+def test_should_create_a_simple_log_file():
+    runner.create_logs("simplelog",0,"testfile")
+    number_of_files = run("grep testfile simplelog0.log",shell=True)
+    assert number_of_files.returncode == 0
+
+
 def test_should_run_cmd_n_times_not_successfully_and_fail():
     runner.get_exit_codes = []
     total_exit_codes_number = runner.start_runner(
