@@ -177,20 +177,19 @@ def print_summary():
 
 def signal_handler(signal_recieved, frame):
     print(f"Program was interrupted by signal number {signal_recieved}")
+    print_summary()
     sys.exit(0)
 
 
 if __name__ == "__main__":
-    try:
-        signal.signal(signal.SIGINT, signal_handler)
-        signal.signal(signal.SIGTERM, signal_handler)
-        args = build_parser()
-        if args.debug:
-            pdb.set_trace()
-            start_runner(args.COMMAND, args.c, args.failed_count,
-                         args.sys_trace, args.call_trace, args.log_trace)
-        else:
-            start_runner(args.COMMAND, args.c, args.failed_count,
-                         args.sys_trace, args.call_trace, args.log_trace)
-    finally:
-        print_summary()
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    args = build_parser()
+    if args.debug:
+        pdb.set_trace()
+        start_runner(args.COMMAND, args.c, args.failed_count,
+                     args.sys_trace, args.call_trace, args.log_trace)
+    else:
+        start_runner(args.COMMAND, args.c, args.failed_count,
+                     args.sys_trace, args.call_trace, args.log_trace)
+    print_summary()
